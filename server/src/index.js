@@ -2,6 +2,8 @@ import "dotenv/config";
 import crypto from "crypto";
 import cors from "cors";
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import {
   anonymizeContent,
   buildEntryList,
@@ -18,6 +20,9 @@ import { isStorageConfigured, readSnapshot, saveSnapshot } from "./storage.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const clientDistPath = path.resolve(__dirname, "../../client/dist");
 
 app.use(cors());
 app.use(express.json());
@@ -228,6 +233,17 @@ app.post("/api/repos/export", async (request, response) => {
   }
 });
 
-app.listen(port, () => {
+app.use(express.static(clientDistPath));
+
+app.get("*", (request, response, next) => {
+  if (request.path.startsWith("/api/")) {
+    next();
+    return;
+  }
+
+  response.sendFile(path.join(clientDistPath, "index.html"));
+});
+
+app.listen(port, "0.0.0.0", () => {
   console.log(`Anonymous repo server listening on port ${port}`);
 });

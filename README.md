@@ -50,6 +50,17 @@ npm run dev:client
 
 The frontend runs on `http://localhost:5173` and proxies `/api` requests to the Express server on `http://localhost:4000`.
 
+## Render deployment
+
+For a single Render web service deployment, use:
+
+```bash
+Build Command: npm install && npm --prefix client install && npm --prefix server install && npm --prefix client run build
+Start Command: npm start
+```
+
+The Express server serves the built frontend from `client/dist` in production.
+
 ## Sharing
 
 Use the `Create share link` action in the UI to persist the imported repository on the server and generate a URL like:
